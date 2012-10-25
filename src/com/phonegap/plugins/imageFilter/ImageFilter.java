@@ -29,7 +29,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.wheru.phonegap.R;
+*change to app
+//import com.yourapp.phonegap.R;
 
 public class ImageFilter extends Plugin {
 
