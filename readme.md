@@ -17,8 +17,3 @@ Examples
 <img src='http://i.imgur.com/zl9As.png'/>
 
 See index.html in the example project for sample code
-
-<<<<<<< HEAD
-
-=======
->>>>>>> Added example project
