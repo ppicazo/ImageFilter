@@ -1,0 +1,231 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <title>Home</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+        <!--        main css-->
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+
+
+        <script type="text/javascript" charset="utf-8" src="cordova-2.1.0.js"></script>
+
+        <!--        plugin js-->
+
+        <script type="text/javascript" charset="utf-8" src="js/ImageFilter.js"></script>
+
+
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+
+        <!--        main jqm from cdn-->
+
+        <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+
+
+
+        <script type="text/javascript">
+
+            var ready = false;
+            var image, select, capture, filterImage, borderImage, rotateLeft, rotateRight, imageDiv, width;
+            var finishedUri;
+            var resizedUri;
+
+            $(document).bind("pageinit", function() {
+                
+                document.addEventListener("deviceready", function() {
+                    alert('ready');
+                    
+                    image = $('img#image');
+
+                    select = $('#button_select');
+                    capture = $('#button_capture');
+
+                    filterImage = $('#image_filter');
+                    borderImage = $('#image_border');
+
+                    rotateLeft = $('#rotate_left');
+                    rotateRight = $('#rotate_right');
+
+                    imageDiv = $('#image_div');
+
+                    width = $('.ui-content').width();
+                    image.width(width);
+
+                    rotateLeft.bind("click", function() {
+                        rotatePhoto(resizedUri, -90);
+                    });
+                    rotateRight.bind("click", function() {
+                        rotatePhoto(resizedUri, 90);
+                    });
+                    filterImage.bind("change", function() {
+                        var filterName = filterImage.val();
+                        var borderName = borderImage.val();
+                        filter(resizedUri, filterName, borderName);
+                    });
+                    borderImage.bind("change", function() {
+                        var filterName = filterImage.val();
+                        var borderName = borderImage.val();
+                        filter(resizedUri, filterName, borderName);
+                    });
+
+
+                    capture.bind("click", function() {
+                        capturePhoto();
+                    });
+
+                    select.bind("click", function() {
+                        getSavedPhoto();
+
+                    });
+
+                    function resizePhoto(inputUri) {
+
+                        imageDiv.show();
+
+                        plugins.ImageFilter.resize(inputUri, function(photoUri) {
+
+                            resizedUri = photoUri;
+                            finishedUri = photoUri;
+                            image.attr('src', resizedUri + '?' + Math.random());
+
+                        }, function(error) {
+                            console.log(error);
+                            alert('error resizing');
+                        });
+                    }
+                    function rotatePhoto(inputUri, direction) {
+
+                        plugins.ImageFilter.rotate(inputUri, direction, function(photoUri) {
+
+                            resizedUri = photoUri;
+                            finishedUri = photoUri;
+                            image.attr('src', resizedUri + '?' + Math.random());
+
+                        }, function(error) {
+                            console.log(error);
+                            alert('error rotating');
+                        });
+                    }
+                    function filter(inputUri, filterName, borderName) {
+
+                        plugins.ImageFilter.applyFilter(inputUri, filterName, borderName, function(photoUri) {
+
+                            finishedUri = photoUri;
+                            image.attr('src', finishedUri + '?' + Math.random());
+
+                        }, function(error) {
+                            console.log(error);
+                            alert('error applying filter');
+                        });
+                    }
+                    function capturePhoto() {
+                        // Take picture using device camera and retrieve image as URI
+                        var options = {
+                            quality: 100,
+                            destinationType: Camera.DestinationType.FILE_URI,
+                            sourceType: Camera.PictureSourceType.CAMERA,
+                            encodingType: Camera.EncodingType.PNG,
+                            targetWidth: $(window).width(),
+                            saveToPhotoAlbum: true
+                        };
+                        navigator.camera.getPicture(resizePhoto, onFail, options);
+                    }
+                    function getSavedPhoto() {
+
+                        var options = {
+                            quality: 100,
+                            destinationType: Camera.DestinationType.FILE_URI,
+                            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                            mediaType: Camera.MediaType.PICTURE,
+                            encodingType: Camera.EncodingType.PNG,
+                            targetWidth: $(window).width(),
+                            saveToPhotoAlbum: false
+                        };
+
+                        navigator.camera.getPicture(resizePhoto, onFail, options);
+                    }
+                    function onFail(){
+                        alert('camera fail');
+                    }
+                }, false);
+
+
+
+            });
+
+        </script>  
+
+
+    </head> 
+
+    <body>
+
+        <div data-role="page" id="start">
+
+            <div data-role="content">
+
+                <div id="image_div" class="hide">
+                    <div class="wrapper">
+
+                        <img id="image" src="" />
+                    </div>
+
+                    <span>Rotate</span>
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="#" id="rotate_left" data-theme="a">Rotate left</a></li>
+                            <li><a href="#" id="rotate_right" data-theme="a">Rotate right</a></li>
+                        </ul>
+                    </div>
+
+                    <span>Filter</span>
+
+
+                    <select id="image_filter" data-mini="true" data-theme="a" data-icon="chevron-down">
+                        <option value="none">None</option>
+                        <option value="sunnyside">Sunny</option>
+                        <option value="cool">Cool</option>
+                        <option value="filter0">Filter0</option>
+                        <option value="filter1">Filter1</option>
+                        <option value="filter2">Filter2</option>
+                        <option value="filter3">Filter3</option>
+                        <option value="filter4">Filter4</option>
+                        <option value="filter5">Filter5</option>
+                        <option value="filter6">Filter6</option>
+                        <option value="filter7">Filter7</option>
+                        <option value="filter8">Filter8</option>
+                        <option value="worn">Worn</option>
+                        <option value="vintage">Vintage</option>
+                        <option value="stark">Stark</option>
+                        <option value="grayscale">Grayscale</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="random">Random</option>
+                    </select> 
+                    <span>Border</span>
+                    <select id="image_border" data-mini="true" data-theme="a" data-icon="chevron-down">
+                        <option value="none">None</option>
+                        <option value="black">Black</option>
+                        <option value="white">White</option>
+                        <option value="painter">Painter</option>
+                        <option value="vignette">Vignette</option>
+                        <option value="vintage">Vintage</option>
+                    </select> 
+                </div>
+
+            </div>
+
+            <div data-role="footer" data-position="fixed" data-theme="a">
+
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" id="button_capture" data-theme="a" data-iconpos="right">Take photo</a></li>
+                        <li><a href="#" id="button_select" data-theme="a" data-iconpos="right">Gallery</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
