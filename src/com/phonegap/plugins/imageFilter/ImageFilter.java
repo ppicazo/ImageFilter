@@ -43,7 +43,7 @@ public class ImageFilter extends Plugin {
 	@Override
 	public PluginResult execute(String action, JSONArray optionsArr, String callBackId) {
 		
-		Log.d("imageFilter", "PLUGIN execute called with action: " + action);
+		Log.d(TAG, "PLUGIN execute called with action: " + action);
 
 		try {
 
