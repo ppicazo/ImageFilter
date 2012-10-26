@@ -32,16 +32,16 @@ import android.util.Log;
 
 public class ImageFilter extends Plugin {
 
-	private String TAG = "ImageFilter";
+	private final String TAG = "ImageFilter";
 	
-	private final String resized = "resized.png";
-	private final String noMedia = ".nomedia";
-	private final String directory = "someappname";
+	private final String RESIZED_FILENAME = "resized.png";
+	private final String NO_MEDIA = ".nomedia";
+	private final String DIRECTORY = "changetoappname";
 
 	@Override
 	public PluginResult execute(String action, JSONArray optionsArr, String callBackId) {
 		
-		Log.d("imageFilter", "PLUGIN execute called with action: " + action);
+		Log.d(TAG, "PLUGIN execute called with action: " + action);
 
 		try {
 
@@ -74,7 +74,6 @@ public class ImageFilter extends Plugin {
 				String outputString = rotate(inputString, direction);
 
 				if (outputString != null) {
-
 					return new PluginResult(PluginResult.Status.OK, outputString);
 				}
 				else {
@@ -157,7 +156,7 @@ public class ImageFilter extends Plugin {
 
 		bmp = Bitmap.createBitmap(bmp, offsetX, offsetY, width - (offsetX * 2), height - (offsetY * 2), matrix, true);
 
-		String path = Environment.getExternalStorageDirectory().toString() + File.separator + directory;
+		String path = Environment.getExternalStorageDirectory().toString() + File.separator + DIRECTORY;
 
 		File outputDir = new File(path);
 
@@ -165,11 +164,11 @@ public class ImageFilter extends Plugin {
 		if (!outputDir.exists()) {
 			outputDir.mkdir();
 			// add the no media file
-			File media = new File(path + File.separator + noMedia);
+			File media = new File(path + File.separator + NO_MEDIA);
 			media.createNewFile();
 		}
 
-		File outputFile = new File(path + File.separator + resized);
+		File outputFile = new File(path + File.separator + RESIZED_FILENAME);
 
 		FileOutputStream out = new FileOutputStream(outputFile);
 
@@ -197,18 +196,18 @@ public class ImageFilter extends Plugin {
 
 		bmp = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
 
-		String path = Environment.getExternalStorageDirectory().toString() + File.separator + directory;
+		String path = Environment.getExternalStorageDirectory().toString() + File.separator + DIRECTORY;
 
 		File outputDir = new File(path);
 
 		if (!outputDir.exists()) {
 			outputDir.mkdir();
-			File media = new File(path + File.separator + noMedia);
+			File media = new File(path + File.separator + NO_MEDIA);
 			media.createNewFile();
 
 		}
 
-		File outputFile = new File(path + File.separator + resized);
+		File outputFile = new File(path + File.separator + RESIZED_FILENAME);
 
 		FileOutputStream out = new FileOutputStream(outputFile);
 		bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -393,13 +392,13 @@ public class ImageFilter extends Plugin {
 			}
 		}
 
-		String path = Environment.getExternalStorageDirectory().toString() + File.separator + directory;
+		String path = Environment.getExternalStorageDirectory().toString() + File.separator + DIRECTORY;
 
 		File outputDir = new File(path);
 
 		if (!outputDir.exists()) {
 			outputDir.mkdir();
-			File media = new File(path + File.separator + noMedia);
+			File media = new File(path + File.separator + NO_MEDIA);
 			media.createNewFile();
 
 		}
@@ -419,7 +418,7 @@ public class ImageFilter extends Plugin {
 		is.close();
 
 		String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
-				+ File.separator + directory;
+				+ File.separator + DIRECTORY;
 
 		File outputDir = new File(path);
 
