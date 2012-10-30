@@ -30,6 +30,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import android.content.Context;
+
+import android.renderscript.RenderScript;
+import android.renderscript.Allocation;
+
 public class ImageFilter extends Plugin {
 
 	private final String TAG = "ImageFilter";
@@ -37,6 +42,35 @@ public class ImageFilter extends Plugin {
 	private final String RESIZED_FILENAME = "resized.png";
 	private final String NO_MEDIA = ".nomedia";
 	private final String DIRECTORY = "changetoappname";
+
+  private Bitmap mBitmapIn;
+  private Bitmap mBitmapOut;
+
+	private RenderScript mRS;
+  private Allocation mInAllocation;
+  private Allocation mOutAllocation;
+  private ScriptC_mono mScript;
+
+  private Context getApplicationContext() {
+  	return cordova.getActivity().getApplicationContext();
+  }
+
+  private void createScript() {
+  	
+  	/*
+	  mRS = RenderScript.create(getApplicationContext());
+
+	  mInAllocation = Allocation.createFromBitmap(mRS, mBitmapIn,
+	                                              Allocation.MipmapControl.MIPMAP_NONE,
+	                                              Allocation.USAGE_SCRIPT);
+	  mOutAllocation = Allocation.createTyped(mRS, mInAllocation.getType());
+
+	  mScript = new ScriptC_mono(mRS, getApplicationContext().getResources(), R.raw.mono);
+
+	  mScript.forEach_root(mInAllocation, mOutAllocation);
+	  mOutAllocation.copyTo(mBitmapOut);
+	  */
+  }
 
 	@Override
 	public PluginResult execute(String action, JSONArray optionsArr, String callBackId) {
@@ -59,7 +93,6 @@ public class ImageFilter extends Plugin {
 				String outputString = resize(inputString);
 
 				if (outputString != null) {
-
 					return new PluginResult(PluginResult.Status.OK, outputString);
 				}
 				else {
@@ -91,7 +124,6 @@ public class ImageFilter extends Plugin {
 				String outputString = renderImage(inputString, filter, border);
 
 				if (outputString != null) {
-
 					return new PluginResult(PluginResult.Status.OK, outputString);
 				}
 				else {
@@ -103,7 +135,6 @@ public class ImageFilter extends Plugin {
 				Boolean success = saveImageToGallery(inputString);
 
 				if (success == true) {
-
 					return new PluginResult(PluginResult.Status.OK, "Image saved to gallery");
 				}
 				else {
@@ -226,6 +257,22 @@ public class ImageFilter extends Plugin {
 
 		bmp = Bitmap.createBitmap(bmp);
 
+		mBitmapIn = bmp;
+    mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(), mBitmapIn.getConfig());
+    //createScript();
+
+   	mRS = RenderScript.create(getApplicationContext());
+
+	  mInAllocation = Allocation.createFromBitmap(mRS, mBitmapIn,
+	                                              Allocation.MipmapControl.MIPMAP_NONE,
+	                                              Allocation.USAGE_SCRIPT);
+	  mOutAllocation = Allocation.createTyped(mRS, mInAllocation.getType());
+
+	  mScript = new ScriptC_mono(mRS, getApplicationContext().getResources(), R.raw.mono);
+
+	  mScript.forEach_root(mInAllocation, mOutAllocation);
+	  mOutAllocation.copyTo(bmp);
+
 		// need to make the bitmap mutable for canvas constructor
 		bmp = convertToMutable(bmp);
 
@@ -233,6 +280,7 @@ public class ImageFilter extends Plugin {
 		Canvas canvas = new Canvas(bmp);
 		canvas.drawBitmap(bmp, 0, 0, new Paint());
 
+		/*
 		//if we have a filter name figure out which one
 		if (!filterName.equalsIgnoreCase("none")) {
 
@@ -354,6 +402,7 @@ public class ImageFilter extends Plugin {
 			Matrix matrix = new Matrix();
 			canvas.drawBitmap(bmp, matrix, paint);
 		}
+		*/
 
 		// add a border
 		if (!borderName.equalsIgnoreCase("none")) {
@@ -391,6 +440,7 @@ public class ImageFilter extends Plugin {
 				canvas.drawBitmap(scaledBorder, 0, 0, new Paint());
 			}
 		}
+
 
 		String path = Environment.getExternalStorageDirectory().toString() + File.separator + DIRECTORY;
 
